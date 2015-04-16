@@ -79,6 +79,21 @@
   function isSlotSelected($slot) { return $slot.is('[data-selected]'); }
   function isSlotSelecting($slot) { return $slot.is('[data-selecting]'); }
 
+  /**
+   * Get the selected time slots given a starting and a ending slot
+   * @private
+   * @returns {Array} An array of selected time slots
+   */
+  function getSelection(plugin, $a, $b) {
+    var $slots, small, large, temp;
+    if (!$a.hasClass('time-slot') || !$b.hasClass('time-slot') ||
+        ($a.data('day') != $b.data('day'))) { return []; }
+    $slots = plugin.$el.find('.time-slot[data-day="' + $a.data('day') + '"]');
+    small = $slots.index($a); large = $slots.index($b);
+    if (small > large) { temp = small; small = large; large = temp; }
+    return $slots.slice(small, large + 1);
+  }
+
   DayScheduleSelector.prototype.attachEvents = function () {
     var plugin = this
       , options = this.options
@@ -100,6 +115,7 @@
           plugin.$el.find('.time-slot[data-day="' + day + '"]').filter('[data-selecting]')
             .attr('data-selected', 'selected').removeAttr('data-selecting');
           plugin.$el.find('.time-slot').removeAttr('data-disabled');
+          plugin.$el.trigger('selected.artsy.dayScheduleSelector', [getSelection(plugin, plugin.$selectingStart, $(this))]);
           plugin.$selectingStart = null;
         }
       }
