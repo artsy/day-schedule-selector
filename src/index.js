@@ -5,7 +5,7 @@
     this.$el = $(el);
     this.options = $.extend({}, DayScheduleSelector.DEFAULTS, options);
     this.render();
-    this.attachEvents(this.options);
+    this.attachEvents();
     this.$selectingStart = null;
   }
 
@@ -21,65 +21,6 @@
                     '</table>'                                  +
                   '<div>'
   };
-
-  /**
-   * Generate Date objects for each time slot in a day
-   * @private
-   * @param {String} start Start time in HH:mm format, e.g. "08:00"
-   * @param {String} end End time in HH:mm format, e.g. "21:00"
-   * @param {Number} interval Interval of each time slot in minutes, e.g. 30 (minutes)
-   * @returns {Array} An array of Date objects representing the start time of the time slots
-   */
-  function generateDates(start, end, interval) {
-    var numOfRows = Math.ceil(timeDiff(start, end) / interval);
-    return $.map(new Array(numOfRows), function (_, i) {
-      return new Date(Date.parse('2000-01-01 ' + start) + i * interval * 60000);
-    });
-  }
-
-  /**
-   * Return time difference in minutes
-   * @private
-   */
-  function timeDiff(start, end) {   // time in HH:mm format
-    var dummy = '2000-01-01 '; // need a dummy date to utilize the Date object
-    return (Date.parse(dummy + end) -
-            Date.parse(dummy + start)) / 60000;
-  }
-
-  /**
-   * Convert a Date object to time in H:mm format with am/pm
-   * @private
-   * @returns {String} Time in H:mm format with am/pm, e.g. '9:30am'
-   */
-  function hmmAmPm(date) {
-    var hours = date.getHours()
-      , minutes = date.getMinutes()
-      , ampm = hours >= 12 ? 'pm' : 'am';
-    return hours + ':' + ('0' + minutes).slice(-2) + ampm;
-  }
-
-  /**
-   * Convert a Date object to time in HH:mm format
-   * @private
-   * @returns {String} Time in HH:mm format, e.g. '09:30'
-   */
-  function hhmm(date) {
-    var hours = date.getHours()
-      , minutes = date.getMinutes();
-    return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
-  }
-
-  function hhmmToSecondsSinceMidnight(hhmm) {
-    var h = hhmm.split(':')[0]
-      , m = hhmm.split(':')[1];
-    return parseInt(h) * 60 + parseInt(m);
-  }
-
-  function secondsSinceMidnightToHhmm(seconds) {
-    return ('0' + Math.floor(seconds / 60)).slice(-2) + ':' +
-           ('0' + (seconds % 60)).slice(-2);
-  }
 
   /**
    * Render the calendar UI
@@ -105,7 +46,7 @@
   };
 
   /**
-   * Render the calendar rows, including the time slots and the label
+   * Render the calendar rows, including the time slots and labels
    * @public
    */
   DayScheduleSelector.prototype.renderRows = function () {
@@ -253,6 +194,65 @@
   }
 
   $.fn.dayScheduleSelector = Plugin;
+
+  /**
+   * Generate Date objects for each time slot in a day
+   * @private
+   * @param {String} start Start time in HH:mm format, e.g. "08:00"
+   * @param {String} end End time in HH:mm format, e.g. "21:00"
+   * @param {Number} interval Interval of each time slot in minutes, e.g. 30 (minutes)
+   * @returns {Array} An array of Date objects representing the start time of the time slots
+   */
+  function generateDates(start, end, interval) {
+    var numOfRows = Math.ceil(timeDiff(start, end) / interval);
+    return $.map(new Array(numOfRows), function (_, i) {
+      return new Date(Date.parse('2000-01-01 ' + start) + i * interval * 60000);
+    });
+  }
+
+  /**
+   * Return time difference in minutes
+   * @private
+   */
+  function timeDiff(start, end) {   // time in HH:mm format
+    var dummy = '2000-01-01 '; // need a dummy date to utilize the Date object
+    return (Date.parse(dummy + end) -
+            Date.parse(dummy + start)) / 60000;
+  }
+
+  /**
+   * Convert a Date object to time in H:mm format with am/pm
+   * @private
+   * @returns {String} Time in H:mm format with am/pm, e.g. '9:30am'
+   */
+  function hmmAmPm(date) {
+    var hours = date.getHours()
+      , minutes = date.getMinutes()
+      , ampm = hours >= 12 ? 'pm' : 'am';
+    return hours + ':' + ('0' + minutes).slice(-2) + ampm;
+  }
+
+  /**
+   * Convert a Date object to time in HH:mm format
+   * @private
+   * @returns {String} Time in HH:mm format, e.g. '09:30'
+   */
+  function hhmm(date) {
+    var hours = date.getHours()
+      , minutes = date.getMinutes();
+    return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+  }
+
+  function hhmmToSecondsSinceMidnight(hhmm) {
+    var h = hhmm.split(':')[0]
+      , m = hhmm.split(':')[1];
+    return parseInt(h) * 60 + parseInt(m);
+  }
+
+  function secondsSinceMidnightToHhmm(seconds) {
+    return ('0' + Math.floor(seconds / 60)).slice(-2) + ':' +
+           ('0' + (seconds % 60)).slice(-2);
+  }
 
   // Expose some utility functions
   window.DayScheduleSelector = {
