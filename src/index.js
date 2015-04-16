@@ -7,7 +7,6 @@
     this.render();
     this.attachEvents(this.options);
     this.$selectingStart = null;
-    this.selections = {};
   }
 
   DayScheduleSelector.DEFAULTS = {
@@ -49,15 +48,37 @@
   }
 
   /**
-   * Convert a Date object to time in AM/PM format (ignore its date)
+   * Convert a Date object to time in H:mm format with am/pm
    * @private
+   * @returns {String} Time in H:mm format with am/pm, e.g. '9:30am'
    */
-  function getAPTime(date) {
+  function hmmAmPm(date) {
     var hours = date.getHours()
       , minutes = date.getMinutes()
-      , ampm = hours >= 12 ? 'pm' : 'am'
-
+      , ampm = hours >= 12 ? 'pm' : 'am';
     return hours + ':' + ('0' + minutes).slice(-2) + ampm;
+  }
+
+  /**
+   * Convert a Date object to time in HH:mm format
+   * @private
+   * @returns {String} Time in HH:mm format, e.g. '09:30'
+   */
+  function hhmm(date) {
+    var hours = date.getHours()
+      , minutes = date.getMinutes();
+    return ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+  }
+
+  function hhmmToSecondsSinceMidnight(hhmm) {
+    var h = hhmm.split(':')[0]
+      , m = hhmm.split(':')[1];
+    return parseInt(h) * 60 + parseInt(m);
+  }
+
+  function secondsSinceMidnightToHhmm(seconds) {
+    return ('0' + Math.floor(seconds / 60)).slice(-2) + ':' +
+           ('0' + (seconds % 60)).slice(-2);
   }
 
   /**
@@ -96,10 +117,10 @@
 
     $.each(generateDates(start, end, interval), function (i, d) {
       var daysInARow = $.map(new Array(days.length), function (_, i) {
-        return '<td class="time-slot" data-time="' + d.toTimeString() + '" data-day="' + days[i] + '"></td>'
+        return '<td class="time-slot" data-time="' + hhmm(d) + '" data-day="' + days[i] + '"></td>'
       }).join();
 
-      $el.append('<tr><td class="time-label">' + getAPTime(d) + '</td>' + daysInARow + '</tr>');
+      $el.append('<tr><td class="time-label">' + hmmAmPm(d) + '</td>' + daysInARow + '</tr>');
     });
   };
 
@@ -164,10 +185,10 @@
    * @returns {Object} An object containing the selections of each day, e.g.
    *    {
    *      0: [],
-   *      1: [["15:00:00 GMT-0500 (EST)", "16:30:00 GMT-0500 (EST)"]],
+   *      1: [["15:00", "16:30"]],
    *      2: [],
    *      3: [],
-   *      5: [["09:00:00 GMT-0500 (EST)", "12:30:00 GMT-0500 (EST)"], ["15:00:00 GMT-0500 (EST)", "16:30:00 GMT-0500 (EST)"]],
+   *      5: [["09:00", "12:30"], ["15:00", "16:30"]],
    *      6: []
    *    }
    */
@@ -188,7 +209,33 @@
       });
     })
     return selections;
-  }
+  };
+
+  /**
+   * Deserialize the schedule and render on the UI
+   * @public
+   * @param {Object} schedule An object containing the schedule of each day, e.g.
+   *    {
+   *      0: [],
+   *      1: [["15:00", "16:30"]],
+   *      2: [],
+   *      3: [],
+   *      5: [["09:00", "12:30"], ["15:00", "16:30"]],
+   *      6: []
+   *    }
+   */
+  DayScheduleSelector.prototype.deserialize = function (schedule) {
+    var plugin = this, i;
+    $.each(schedule, function(d, ds) {
+      var $slots = plugin.$el.find('.time-slot[data-day="' + d + '"]');
+      $.each(ds, function(_, s) {
+        for (i = 0; i < $slots.length; i++) {
+          if ($slots.eq(i).data('time') >= s[1]) { break; }
+          if ($slots.eq(i).data('time') >= s[0]) { plugin.select($slots.eq(i)); }
+        }
+      })
+    });
+  };
 
   // DayScheduleSelector Plugin Definition
   // =====================================
@@ -206,5 +253,11 @@
   }
 
   $.fn.dayScheduleSelector = Plugin;
+
+  // Expose some utility functions
+  window.DayScheduleSelector = {
+    ssmToHhmm: secondsSinceMidnightToHhmm,
+    hhmmToSsm: hhmmToSecondsSinceMidnight
+  };
 
 })(jQuery);
