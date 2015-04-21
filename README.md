@@ -2,6 +2,8 @@
 
 A jQuery plugin to render a weekly schedule and allow selecting time slots in each day.
 
+![demo](https://cloud.githubusercontent.com/assets/796573/7264504/23c2109a-e85a-11e4-9c26-19358686cbb0.gif)
+
 ## Getting Started
 ```javascript
 $('#weekly-schedule').dayScheduleSelector({
