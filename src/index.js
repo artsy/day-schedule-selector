@@ -222,7 +222,8 @@
   function generateDates(start, end, interval) {
     var numOfRows = Math.ceil(timeDiff(start, end) / interval);
     return $.map(new Array(numOfRows), function (_, i) {
-      return new Date(Date.parse('2000-01-01 ' + start) + i * interval * 60000);
+      // need a dummy date to utilize the Date object
+      return new Date(new Date(2000, 0, 1, start.split(':')[0], start.split(':')[1]).getTime() + i * interval * 60000);
     });
   }
 
@@ -231,9 +232,9 @@
    * @private
    */
   function timeDiff(start, end) {   // time in HH:mm format
-    var dummy = '2000-01-01 '; // need a dummy date to utilize the Date object
-    return (Date.parse(dummy + end) -
-            Date.parse(dummy + start)) / 60000;
+    // need a dummy date to utilize the Date object
+    return (new Date(2000, 0, 1, end.split(':')[0], end.split(':')[1]).getTime() -
+            new Date(2000, 0, 1, start.split(':')[0], start.split(':')[1]).getTime()) / 60000;
   }
 
   /**
