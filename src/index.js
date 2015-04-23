@@ -263,7 +263,7 @@
   function hhmmToSecondsSinceMidnight(hhmm) {
     var h = hhmm.split(':')[0]
       , m = hhmm.split(':')[1];
-    return parseInt(h) * 60 + parseInt(m);
+    return parseInt(h, 10) * 60 + parseInt(m, 10);
   }
 
   function secondsSinceMidnightToHhmm(seconds) {
