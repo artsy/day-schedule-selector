@@ -263,12 +263,17 @@
   function hhmmToSecondsSinceMidnight(hhmm) {
     var h = hhmm.split(':')[0]
       , m = hhmm.split(':')[1];
-    return parseInt(h, 10) * 60 + parseInt(m, 10);
+    return parseInt(h, 10) * 60 * 60 + parseInt(m, 10) * 60;
   }
 
+  /**
+   * Convert seconds since midnight to HH:mm string, and simply
+   * ignore the seconds.
+   */
   function secondsSinceMidnightToHhmm(seconds) {
-    return ('0' + Math.floor(seconds / 60)).slice(-2) + ':' +
-           ('0' + (seconds % 60)).slice(-2);
+    var minutes = Math.floor(seconds / 60);
+    return ('0' + Math.floor(minutes / 60)).slice(-2) + ':' +
+           ('0' + (minutes % 60)).slice(-2);
   }
 
   // Expose some utility functions
