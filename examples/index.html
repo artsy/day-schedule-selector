@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Day Schedule Selector Example</title>
+  <!--[if IE]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+
+  <div id="day-schedule"></div>
+
+  <script src="vendor/javascripts/jquery-1.11.2.js"></script>
+  <script src="../src/index.js"></script>
+  <script>
+    (function ($) {
+      $("#day-schedule").dayScheduleSelector({
+        /*
+        days: [1, 2, 3, 5, 6],
+        interval: 15,
+        startTime: '09:50',
+        endTime: '21:06'
+        */
+      });
+      $("#day-schedule").on('selected.artsy.dayScheduleSelector', function (e, selected) {
+        console.log(selected);
+      })
+      $("#day-schedule").data('artsy.dayScheduleSelector').deserialize({
+        '0': [['09:30', '11:00'], ['13:00', '16:30']]
+      });
+    })($);
+  </script>
+
+</body>
+</html>
