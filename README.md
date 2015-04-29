@@ -1,4 +1,4 @@
-# day-schedule-selector
+# day-schedule-selector [![Build Status](https://travis-ci.org/starsirius/day-schedule-selector.svg)](https://travis-ci.org/starsirius/day-schedule-selector)
 
 A jQuery plugin to render a weekly schedule and allow selecting time slots in each day.
 
