@@ -99,7 +99,7 @@
       , options = this.options
       , $slots;
 
-    this.$el.on('click', 'td', function () {
+    this.$el.on('click', '.time-slot', function () {
       var day = $(this).data('day');
       if (!plugin.isSelecting()) {  // if we are not in selecting mode
         if (isSlotSelected($(this))) { plugin.deselect($(this)); }
@@ -121,7 +121,7 @@
       }
     });
 
-    this.$el.on('mouseover', 'td', function () {
+    this.$el.on('mouseover', '.time-slot', function () {
       var $slots, day, start, end, temp;
       if (plugin.isSelecting()) {  // if we are in selecting mode
         day = plugin.$selectingStart.data('day');
