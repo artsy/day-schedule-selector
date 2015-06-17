@@ -11,8 +11,10 @@
 
   DayScheduleSelector.DEFAULTS = {
     days        : [0, 1, 2, 3, 4, 5, 6],  // Sun - Sat
+    stringDays  : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     startTime   : '08:00',                // HH:mm format
     endTime     : '20:00',                // HH:mm format
+    timeFormat  : 'hh:mm',                // hh:mm or HH:MM
     interval    : 30,                     // minutes
     template    : '<div class="day-schedule-selector">'         +
                     '<table class="schedule-table">'            +
@@ -37,7 +39,7 @@
    * @public
    */
   DayScheduleSelector.prototype.renderHeader = function () {
-    var stringDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    var stringDays  = this.options.stringDays
       , days = this.options.days
       , html = '';
 
@@ -52,6 +54,7 @@
   DayScheduleSelector.prototype.renderRows = function () {
     var start = this.options.startTime
       , end = this.options.endTime
+      , timeFormat = this.options.timeFormat
       , interval = this.options.interval
       , days = this.options.days
       , $el = this.$el.find('.schedule-rows');
@@ -61,7 +64,7 @@
         return '<td class="time-slot" data-time="' + hhmm(d) + '" data-day="' + days[i] + '"></td>'
       }).join();
 
-      $el.append('<tr><td class="time-label">' + hmmAmPm(d) + '</td>' + daysInARow + '</tr>');
+      $el.append('<tr><td class="time-label">' + hmmAmPm(d,timeFormat) + '</td>' + daysInARow + '</tr>');
     });
   };
 
@@ -242,11 +245,20 @@
    * @private
    * @returns {String} Time in H:mm format with am/pm, e.g. '9:30am'
    */
-  function hmmAmPm(date) {
+  function hmmAmPm(date,timeFormat) {
     var hours = date.getHours()
       , minutes = date.getMinutes()
       , ampm = hours >= 12 ? 'pm' : 'am';
-    return hours + ':' + ('0' + minutes).slice(-2) + ampm;
+
+
+    if (timeFormat == 'hh:mm') {
+      var hours = hours >= 13 ? hours - 12 : hours;
+      var time = hours + ':' + ('0' + minutes).slice(-2) + ampm;
+    } else {
+      var time = hours + ':' + ('0' + minutes).slice(-2);
+    }
+
+    return time
   }
 
   /**
