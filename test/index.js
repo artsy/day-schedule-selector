@@ -85,4 +85,37 @@ describe ("DayScheduleSelector", function () {
       });
     })
   });
+
+  describe ("#serialize", function() {
+    beforeEach (function() {
+      var selections = [
+        [0, '08:00'], [0, '19:30'], // first one and last one
+        [1, '08:00'], [1, '08:30'], [1, '19:00'], [1, '19:30'], // first two and last two
+        [2, '19:30'], // only last one
+        // all day for 3 (Wednesday),
+        [4, '08:00'], [4, '09:00'], [4, '10:00'], [4, '11:00'], [4, '12:00'], // every other slots in the morning
+        [5, '13:00'], [5, '14:00'], [5, '15:00'], [5, '16:00'], [5, '17:00'], // every other slots in the afternoon
+        [6, '08:00'], [6, '08:30'], [6, '09:00'], [6, '11:30'], [6, '12:00'], [6, '18:30'], [6, '19:00'], [6, '19:30']
+      ]
+      $("#schedule-selector").dayScheduleSelector();
+      for (var i = 0; i < selections.length; i++) {
+        $("#schedule-selector .time-slot[data-day='" + selections[i][0] +"'][data-time='" + selections[i][1] + "']").attr('data-selected', 'selected');
+      }
+      // Select all day for Wednesday
+      $("#schedule-selector .time-slot[data-day='3']").attr('data-selected', 'selected');
+    });
+
+    it ("serializes the selected time slots correctly", function () {
+      var selected = $("#schedule-selector").data('artsy.dayScheduleSelector').serialize()
+      selected.should.eql({
+        0: [['08:00', '08:30'], ['19:30', '20:00']],
+        1: [['08:00', '09:00'], ['19:00', '20:00']],
+        2: [['19:30', '20:00']],
+        3: [['08:00', '20:00']],
+        4: [['08:00', '08:30'], ['09:00', '09:30'], ['10:00', '10:30'], ['11:00', '11:30'], ['12:00', '12:30']],
+        5: [['13:00', '13:30'], ['14:00', '14:30'], ['15:00', '15:30'], ['16:00', '16:30'], ['17:00', '17:30']],
+        6: [['08:00', '09:30'], ['11:30', '12:30'], ['18:30', '20:00']]
+      });
+    });
+  });
 });
