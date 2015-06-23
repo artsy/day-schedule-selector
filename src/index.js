@@ -157,12 +157,23 @@
       var start, end;
       start = end = false; selections[v] = [];
       plugin.$el.find(".time-slot[data-day='" + v + "']").each(function () {
-        if (isSlotSelected($(this)) && !start) { start = $(this).data('time'); }
-        else if (!isSlotSelected($(this)) && !!start) {
-          end = $(this).data('time');
-          selections[v].push([start, end]);
-          start = end = false;
+        // Start of selection
+        if (isSlotSelected($(this)) && !start) {
+          start = $(this).data('time');
         }
+
+        // End of selection (I am not selected, so select until my previous one.)
+        if (!isSlotSelected($(this)) && !!start) {
+          end = $(this).data('time');
+        }
+
+        // End of selection (I am the last one :) .)
+        if (isSlotSelected($(this)) && !!start && $(this).is(".time-slot[data-day='" + v + "']:last")) {
+          end = secondsSinceMidnightToHhmm(
+            hhmmToSecondsSinceMidnight($(this).data('time')) + plugin.options.interval * 60);
+        }
+
+        if (!!end) { selections[v].push([start, end]); start = end = false; }
       });
     })
     return selections;
