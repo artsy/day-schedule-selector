@@ -14,6 +14,7 @@
     startTime   : '08:00',                // HH:mm format
     endTime     : '20:00',                // HH:mm format
     interval    : 30,                     // minutes
+    stringDays  : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     template    : '<div class="day-schedule-selector">'         +
                     '<table class="schedule-table">'            +
                       '<thead class="schedule-header"></thead>' +
@@ -37,7 +38,7 @@
    * @public
    */
   DayScheduleSelector.prototype.renderHeader = function () {
-    var stringDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    var stringDays = this.options.stringDays
       , days = this.options.days
       , html = '';
 
