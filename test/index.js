@@ -8,10 +8,18 @@ describe ("DayScheduleSelector", function () {
   describe ("initialization", function () {
     describe ("with default options", function () {
       beforeEach (function () {
-        $ ("#schedule-selector").dayScheduleSelector ();
+        $("#schedule-selector").dayScheduleSelector();
       });
 
-      it ("initializes the day labels properly");
+      it ("initializes the day labels properly", function() {
+        var stringDays = $("#schedule-selector").data('artsy.dayScheduleSelector').options.stringDays
+          , days = $("#schedule-selector").data('artsy.dayScheduleSelector').options.days;
+
+        $(".schedule-header th").length.should.eq(days.length + 1);
+        $.each(days, function(index, day) {
+          $(".schedule-header th").eq(index + 1).text().should.eq(stringDays[index] || "");
+        });
+      });
 
       it ("initializes the time labels properly");
 
@@ -24,13 +32,22 @@ describe ("DayScheduleSelector", function () {
       beforeEach (function () {
         $("#schedule-selector").dayScheduleSelector({
           days: [1, 3, 5, 6],
+          stringDays: ['星期一', '星期三', '星期五'],
           startTime: '12:00',
           endTime: '17:00',
           interval: 20
         });
       })
 
-      it ("initializes the day labels properly");
+      it ("initializes the day labels properly", function() {
+        var stringDays = $("#schedule-selector").data('artsy.dayScheduleSelector').options.stringDays
+          , days = $("#schedule-selector").data('artsy.dayScheduleSelector').options.days;
+
+        $(".schedule-header th").length.should.eq(days.length + 1);
+        $.each(days, function(index, day) {
+          $(".schedule-header th").eq(index + 1).text().should.eq(stringDays[index] || "");
+        });
+      });
 
       it ("initializes the time labels properly");
 

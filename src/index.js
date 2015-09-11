@@ -42,7 +42,7 @@
       , days = this.options.days
       , html = '';
 
-    $.each(days, function (_, v) { html += '<th>' + stringDays[v] + '</th>'; });
+    $.each(days, function (i, _) { html += '<th>' + (stringDays[i] || '') + '</th>'; });
     this.$el.find('.schedule-header').html('<tr><th></th>' + html + '</tr>');
   };
 
