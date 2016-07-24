@@ -3,8 +3,8 @@
   height: 30px;
   margin: 3px;
   padding: 5px;
-  background-color: #eee;
-  cursor: pointer;
+  background-color: #E6F8FA;
+  border: 3px solid white;
 }
 .schedule-rows td:first-child {
   background-color: transparent;
