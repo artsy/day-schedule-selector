@@ -4,7 +4,6 @@
   margin: 3px;
   padding: 5px;
   background-color: #eee;
-  cursor: pointer;
 }
 .schedule-rows td:first-child {
   background-color: transparent;
