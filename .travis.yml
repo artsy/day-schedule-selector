@@ -5,9 +5,13 @@ node_js:
 before_install:
   - rvm install 2.2
   - rvm use 2.2 --fuzzy
+  - export CHROME_BIN=chromium-browser
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
 
 before_script:
   - gem install danger
+
 
 script:
   - npm test
