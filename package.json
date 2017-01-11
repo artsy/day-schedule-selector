@@ -12,7 +12,7 @@
     "karma-chai": "^0.1.0",
     "karma-mocha": "^0.1.10",
     "karma-mocha-reporter": "^1.0.2",
-    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-phantomjs-launcher": "^1.0.2",
     "karma-sinon": "^1.0.4",
     "mocha": "^3.0.2",
     "sinon": "^1.17.5"
