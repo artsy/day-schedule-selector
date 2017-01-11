@@ -1,6 +1,7 @@
 {
   "name": "day-schedule-selector",
   "version": "0.1.0",
+  "engine": { "node": "6.9.4" },
   "scripts": {
     "test": "node_modules/karma/bin/karma start karma.conf.js"
   },
