@@ -7,3 +7,4 @@
 
 #### Fixes
 
+* [#35](https://github.com/artsy/day-schedule-selector/pull/35): Fix empty last time slot when there are many calendars  - [@adelriosantiago](https://github.com/adelriosantiago).

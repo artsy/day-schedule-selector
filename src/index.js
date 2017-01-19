@@ -169,7 +169,7 @@
         }
 
         // End of selection (I am the last one :) .)
-        if (isSlotSelected($(this)) && !!start && $(this).is(".time-slot[data-day='" + v + "']:last")) {
+        if (isSlotSelected($(this)) && !!start && $(this).is($(this).closest('tbody').find(".time-slot[data-day='" + v + "']:last"))) {
           end = secondsSinceMidnightToHhmm(
             hhmmToSecondsSinceMidnight($(this).data('time')) + plugin.options.interval * 60);
         }
