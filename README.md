@@ -52,6 +52,16 @@ $("#weekly-schedule").on('selected.artsy.dayScheduleSelector', function (e, sele
 }
 ```
 
+#### deselected.artsy.dayScheduleSelector
+Triggered when deselecting a slot. Passes the event and the slot that is being deselected.
+```javascript
+$("#weekly-schedule").on('deselected.artsy.dayScheduleSelector', function (e, deselected) {
+  /* To access to the attributes 'data-day' and 'data-time'*/
+  var dataDay = deselected[0].getAttribute("data-day");
+  var dataTime = deselected[0].getAttribute("data-time");
+}
+```
+
 ## Installation
 
 ### Install as a Ruby gem

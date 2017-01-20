@@ -103,7 +103,11 @@
     this.$el.on('click', '.time-slot', function () {
       var day = $(this).data('day');
       if (!plugin.isSelecting()) {  // if we are not in selecting mode
-        if (isSlotSelected($(this))) { plugin.deselect($(this)); }
+        if (isSlotSelected($(this))) { 
+            // trigger an event when deselect a slot and pass it via parameter
+            plugin.$el.trigger('deselected.artsy.dayScheduleSelector', [$(this)]);
+            plugin.deselect($(this)); 
+        }
         else {  // then start selecting
           plugin.$selectingStart = $(this);
           $(this).attr('data-selecting', 'selecting');
