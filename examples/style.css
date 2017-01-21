@@ -13,9 +13,9 @@
   top: -12px;
 }
 .schedule-rows td[data-selected],
-.schedule-rows td[data-selecting] {
-  background-color: #6a0bc1;
-}
+.schedule-rows td[data-selecting='selecting'] {
+  background-color: #C1FC9A; }
+.schedule-rows td[data-selecting='deselecting'] { background-color: #FFDAD6; }
 .schedule-rows td[data-disabled] {
   opacity: 0.55;
 }
