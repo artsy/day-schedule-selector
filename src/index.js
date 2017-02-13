@@ -5,7 +5,7 @@
     this.$el = $(el);
     this.options = $.extend({}, DayScheduleSelector.DEFAULTS, options);
     this.render();
-    this.attachEvents();
+    if(this.options.editable) { this.attachEvents(); }
     this.$selectingStart = null;
   }
 
@@ -14,6 +14,7 @@
     startTime   : '08:00',                // HH:mm format
     endTime     : '20:00',                // HH:mm format
     interval    : 30,                     // minutes
+    editable    : true,                   // false = view only mode
     stringDays  : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     template    : '<div class="day-schedule-selector">'         +
                     '<table class="schedule-table">'            +
@@ -64,6 +65,9 @@
 
       $el.append('<tr><td class="time-label">' + hmmAmPm(d) + '</td>' + daysInARow + '</tr>');
     });
+
+    // If the selector is editable, the cursor should be a pointer.
+    if(this.options.editable) {  $("td.time-slot").css( 'cursor', 'pointer' ); }
   };
 
   /**
