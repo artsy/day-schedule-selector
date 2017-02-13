@@ -98,23 +98,32 @@
   DayScheduleSelector.prototype.attachEvents = function () {
     var plugin = this
       , options = this.options
-      , $slots;
+      , $slots
+      , purpose;
 
     this.$el.on('click', '.time-slot', function () {
       var day = $(this).data('day');
       if (!plugin.isSelecting()) {  // if we are not in selecting mode
-        if (isSlotSelected($(this))) { plugin.deselect($(this)); }
-        else {  // then start selecting
-          plugin.$selectingStart = $(this);
-          $(this).attr('data-selecting', 'selecting');
-          plugin.$el.find('.time-slot').attr('data-disabled', 'disabled');
-          plugin.$el.find('.time-slot[data-day="' + day + '"]').removeAttr('data-disabled');
-        }
+        purpose = isSlotSelected($(this)) ? 'deselecting' : 'selecting';
+
+        // start selecting or deselecting
+        plugin.$selectingStart = $(this);
+        $(this).attr('data-selecting', purpose);
+        plugin.$el.find('.time-slot').attr('data-disabled', 'disabled');
+        plugin.$el.find('.time-slot[data-day="' + day + '"]').removeAttr('data-disabled');
+
       } else {  // if we are in selecting mode
         if (day == plugin.$selectingStart.data('day')) {  // if clicking on the same day column
-          // then end of selection
-          plugin.$el.find('.time-slot[data-day="' + day + '"]').filter('[data-selecting]')
-            .attr('data-selected', 'selected').removeAttr('data-selecting');
+
+          // complete selection/deselection
+          if(purpose === 'selecting'){
+            plugin.$el.find('.time-slot[data-day="' + day + '"]').filter('[data-selecting]')
+              .attr('data-selected', 'selected').removeAttr('data-selecting');
+          } else if(purpose === 'deselecting'){
+            plugin.$el.find('.time-slot[data-day="' + day + '"]').filter('[data-selecting]')
+            .removeAttr('data-selected').removeAttr('data-selecting');
+          }
+
           plugin.$el.find('.time-slot').removeAttr('data-disabled');
           plugin.$el.trigger('selected.artsy.dayScheduleSelector', [getSelection(plugin, plugin.$selectingStart, $(this))]);
           plugin.$selectingStart = null;
@@ -132,7 +141,7 @@
         end = $slots.index(this);
         if (end < 0) return;  // not hovering on the same column
         if (start > end) { temp = start; start = end; end = temp; }
-        $slots.slice(start, end + 1).attr('data-selecting', 'selecting');
+        $slots.slice(start, end + 1).attr('data-selecting', purpose);
       }
     });
   };
