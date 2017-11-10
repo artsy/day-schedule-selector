@@ -101,6 +101,7 @@
       , $slots;
 
     this.$el.on('click', '.time-slot', function () {
+      var bodyElement = $('html, body');
       var day = $(this).data('day');
       if (!plugin.isSelecting()) {  // if we are not in selecting mode
         if (isSlotSelected($(this))) { plugin.deselect($(this)); }
@@ -109,10 +110,40 @@
           $(this).attr('data-selecting', 'selecting');
           plugin.$el.find('.time-slot').attr('data-disabled', 'disabled');
           plugin.$el.find('.time-slot[data-day="' + day + '"]').removeAttr('data-disabled');
+
+          bodyElement.mouseleave(function(event) {
+              console.log('mouse leave: '+ event.pageX + ' ' + event.pageY);
+
+              var leftPageY = event.pageY;
+              var scrollTop = bodyElement.scrollTop();
+              var windowHeight = $(window).height();
+              var pageCenter = scrollTop + (windowHeight / 2);
+              var isScrollDown = (leftPageY > pageCenter);
+              var scrollDelta = isScrollDown ? 5 : -5;
+              var scrollInterval = 50;
+              var scrollTarget = leftPageY - (isScrollDown ? windowHeight : 0);
+
+              var _scrollDown = function() {
+                  scrollTarget += scrollDelta;
+                  bodyElement.scrollTop(scrollTarget);
+              };
+
+              _scrollDown();
+              var timerId = setInterval(_scrollDown, scrollInterval);
+
+              bodyElement.mouseenter(function() {
+                  console.log('mouse enter');
+                  clearInterval(timerId);
+                  bodyElement.off('mouseenter');
+              });
+          });
         }
       } else {  // if we are in selecting mode
         if (day == plugin.$selectingStart.data('day')) {  // if clicking on the same day column
           // then end of selection
+          bodyElement.off('mouseleave');
+          bodyElement.off('mouseenter');
+
           plugin.$el.find('.time-slot[data-day="' + day + '"]').filter('[data-selecting]')
             .attr('data-selected', 'selected').removeAttr('data-selecting');
           plugin.$el.find('.time-slot').removeAttr('data-disabled');
