@@ -128,7 +128,7 @@
                   bodyElement.scrollTop(scrollTarget);
               };
 
-              //_scrollDown();
+              _scrollDown();
               var timerId = setInterval(_scrollDown, scrollInterval);
 
               bodyElement.mouseenter(function() {
