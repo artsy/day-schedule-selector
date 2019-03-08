@@ -15,6 +15,7 @@
     endTime     : '20:00',                // HH:mm format
     interval    : 30,                     // minutes
     stringDays  : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    enabled: true,
     template    : '<div class="day-schedule-selector">'         +
                     '<table class="schedule-table">'            +
                       '<thead class="schedule-header"></thead>' +
@@ -206,6 +207,17 @@
     });
   };
 
+  DayScheduleSelector.prototype.enable = function () {
+    var plugin = this;
+    plugin.options.enabled = true;
+    plugin.$el.removeClass('disabled');
+  }
+
+  DayScheduleSelector.prototype.disable = function () {
+    var plugin = this;
+    plugin.options.enabled = false;
+    plugin.$el.addClass('disabled');
+  }
   // DayScheduleSelector Plugin Definition
   // =====================================
 
