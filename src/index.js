@@ -15,6 +15,7 @@
     endTime     : '20:00',                // HH:mm format
     interval    : 30,                     // minutes
     stringDays  : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    enableHorizontalSelection: false,
     enabled: true,
     onDataChange: function (new_data) {},
     template    : '<div class="day-schedule-selector">'         +
@@ -100,25 +101,70 @@
   DayScheduleSelector.prototype.attachEvents = function () {
     var plugin = this
       , options = this.options
-      , $slots;
+        , $slots
+        , purpose;
 
     this.$el.on('click', '.time-slot', function () {
-      var day = $(this).data('day');
+      var bodyElement = $('html, body');
+      if(!options.enableHorizontalSelection) var day = $(this).data('day');
+
       if (!plugin.isSelecting()) {  // if we are not in selecting mode
-        if (isSlotSelected($(this))) { plugin.deselect($(this)); }
-        else {  // then start selecting
-          plugin.$selectingStart = $(this);
-          $(this).attr('data-selecting', 'selecting');
+        purpose = isSlotSelected($(this)) ? 'deselecting' : 'selecting';
+        $(this).attr('data-selecting', purpose);
+        plugin.$selectingStart = $(this);
+
+        if(!options.enableHorizontalSelection){
           plugin.$el.find('.time-slot').attr('data-disabled', 'disabled');
           plugin.$el.find('.time-slot[data-day="' + day + '"]').removeAttr('data-disabled');
         }
+
         plugin.$el.trigger('dataChanged', [plugin.serialize()]);
         options.onDataChange(plugin.serialize());
+
+        if (isSlotSelected($(this))) {
+          plugin.deselect($(this));
+        } else {  // then start selecting
+          bodyElement.mouseleave(function(event) {
+            var leftPageY = event.pageY;
+            var scrollTop = bodyElement.scrollTop();
+            var windowHeight = $(window).height();
+            var pageCenter = scrollTop + (windowHeight / 2);
+            var isScrollDown = (leftPageY > pageCenter);
+            var scrollDelta = isScrollDown ? 5 : -5;
+            var scrollInterval = 50;
+            var scrollTarget = leftPageY - (isScrollDown ? windowHeight : 0);
+
+            var _scrollDown = function() {
+              scrollTarget += scrollDelta;
+              bodyElement.scrollTop(scrollTarget);
+            };
+
+            _scrollDown();
+            var timerId = setInterval(_scrollDown, scrollInterval);
+
+            bodyElement.mouseenter(function() {
+              clearInterval(timerId);
+              bodyElement.off('mouseenter');
+            });
+          });
+        }
       } else {  // if we are in selecting mode
-        if (day == plugin.$selectingStart.data('day')) {  // if clicking on the same day column
+        if (day == plugin.$selectingStart.data('day') || options.enableHorizontalSelection) {  // if clicking on the same day column
           // then end of selection
-          plugin.$el.find('.time-slot[data-day="' + day + '"]').filter('[data-selecting]')
-            .attr('data-selected', 'selected').removeAttr('data-selecting');
+          bodyElement.off('mouseleave');
+          bodyElement.off('mouseenter');
+          if(!options.enableHorizontalSelection){
+            if(purpose === 'selecting')
+              plugin.$el.find('.time-slot[data-day="' + day + '"]').filter('[data-selecting]').attr('data-selected', 'selected').removeAttr('data-selecting');
+            else if(purpose === 'deselecting')
+              plugin.$el.find('.time-slot[data-day="' + day + '"]').filter('[data-selecting]').removeAttr('data-selected').removeAttr('data-selecting');
+          }else{
+            if(purpose === 'selecting')
+              plugin.$el.find('.time-slot').filter('[data-selecting]').attr('data-selected', 'selected').removeAttr('data-selecting');
+            else if(purpose === 'deselecting')
+              plugin.$el.find('.time-slot').filter('[data-selecting]').removeAttr('data-selected').removeAttr('data-selecting');
+          }
+
           plugin.$el.find('.time-slot').removeAttr('data-disabled');
           plugin.$el.trigger('selected.artsy.dayScheduleSelector', [getSelection(plugin, plugin.$selectingStart, $(this))]);
           plugin.$el.trigger('dataChanged', [plugin.serialize()]);
@@ -131,14 +177,57 @@
     this.$el.on('mouseover', '.time-slot', function () {
       var $slots, day, start, end, tmp;
       if (plugin.isSelecting()) {  // if we are in selecting mode
-        day = plugin.$selectingStart.data('day');
-        $slots = plugin.$el.find('.time-slot[data-day="' + day + '"]');
+        if(!options.enableHorizontalSelection){
+          day = plugin.$selectingStart.data('day');
+          $slots = plugin.$el.find('.time-slot[data-day="' + day + '"]');
+        }else{
+          $slots = plugin.$el.find('.time-slot');
+        }
         $slots.filter('[data-selecting]').removeAttr('data-selecting');
         start = $slots.index(plugin.$selectingStart);
         end = $slots.index(this);
+
+        if(options.enableHorizontalSelection){
+          var startDayNumb = start%7+1;
+          var endDayNumb = end%7+1;
+          var dayRange = [startDayNumb]
+          for(var i=1; i <= Math.abs(startDayNumb - endDayNumb); i++){
+            if(Math.sign(startDayNumb - endDayNumb) > 0){
+              dayRange.push(startDayNumb-i);
+            }else{
+              dayRange.push(startDayNumb+i);
+            }
+          }
+          dayRange.sort();
+        }
+
+        var mousePosition;
+        if(Math.floor((start - end)/7)+1 > 0) mousePosition = "top";
+        else if(Math.floor((start - end)/7)+1 == 0) mousePosition = "center";
+        else if(Math.floor((start - end)/7)+1 < 0) mousePosition = "bottom";
+
+        if(Math.sign(startDayNumb - endDayNumb) > 0) mousePosition += " left";
+        else if(Math.sign(startDayNumb - endDayNumb) == 0) mousePosition += " center";
+        else if(Math.sign(startDayNumb - endDayNumb) < 0) mousePosition += " right";
+
         if (end < 0) return;  // not hovering on the same column
         if (start > end) { tmp = start; start = end; end = tmp; }
-        $slots.slice(start, end + 1).attr('data-selecting', 'selecting');
+
+        if(options.enableHorizontalSelection){
+          dayRange.forEach(day => {
+            switch(mousePosition){
+              case "top right":
+              case "bottom left":
+                $slots.slice(start - Math.abs(startDayNumb - endDayNumb), end +  Math.abs(startDayNumb - endDayNumb) + 1).filter('[data-day="' + day + '"]').attr('data-selecting', purpose);
+                break;
+              default:
+                $slots.slice(start, end + 1).filter('[data-day="' + day + '"]').attr('data-selecting', purpose);
+                break;
+            }
+          })
+        }else{
+          $slots.slice(start, end + 1).attr('data-selecting', purpose);
+        }
       }
     });
   };
