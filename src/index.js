@@ -162,7 +162,7 @@
 
     $.each(this.options.days, function (_, v) {
       var start, end;
-      start = end = false; selections[v] = [];
+      start = end = false; selections['d'+v] = [];
       plugin.$el.find(".time-slot[data-day='" + v + "']").each(function () {
         // Start of selection
         if (isSlotSelected($(this)) && !start) {
@@ -180,7 +180,7 @@
             hhmmToSecondsSinceMidnight($(this).data('time')) + plugin.options.interval * 60);
         }
 
-        if (!!end) { selections[v].push([start, end]); start = end = false; }
+        if (!!end) { selections['d'+v].push([start, end]); start = end = false; }
       });
     })
     return selections;
@@ -202,6 +202,7 @@
   DayScheduleSelector.prototype.deserialize = function (schedule) {
     var plugin = this, i;
     $.each(schedule, function(d, ds) {
+      d = d.substring(1);
       var $slots = plugin.$el.find('.time-slot[data-day="' + d + '"]');
       $.each(ds, function(_, s) {
         for (i = 0; i < $slots.length; i++) {
