@@ -129,7 +129,7 @@
     });
 
     this.$el.on('mouseover', '.time-slot', function () {
-      var $slots, day, start, end, temp;
+      var $slots, day, start, end, tmp;
       if (plugin.isSelecting()) {  // if we are in selecting mode
         day = plugin.$selectingStart.data('day');
         $slots = plugin.$el.find('.time-slot[data-day="' + day + '"]');
@@ -137,7 +137,7 @@
         start = $slots.index(plugin.$selectingStart);
         end = $slots.index(this);
         if (end < 0) return;  // not hovering on the same column
-        if (start > end) { temp = start; start = end; end = temp; }
+        if (start > end) { tmp = start; start = end; end = tmp; }
         $slots.slice(start, end + 1).attr('data-selecting', 'selecting');
       }
     });
