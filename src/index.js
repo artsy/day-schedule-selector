@@ -16,6 +16,7 @@
     interval    : 30,                     // minutes
     stringDays  : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     enabled: true,
+    onDataChange: function (new_data) {},
     template    : '<div class="day-schedule-selector">'         +
                     '<table class="schedule-table">'            +
                       '<thead class="schedule-header"></thead>' +
@@ -111,6 +112,8 @@
           plugin.$el.find('.time-slot').attr('data-disabled', 'disabled');
           plugin.$el.find('.time-slot[data-day="' + day + '"]').removeAttr('data-disabled');
         }
+        plugin.$el.trigger('dataChanged', [plugin.serialize()]);
+        options.onDataChange(plugin.serialize());
       } else {  // if we are in selecting mode
         if (day == plugin.$selectingStart.data('day')) {  // if clicking on the same day column
           // then end of selection
@@ -118,6 +121,8 @@
             .attr('data-selected', 'selected').removeAttr('data-selecting');
           plugin.$el.find('.time-slot').removeAttr('data-disabled');
           plugin.$el.trigger('selected.artsy.dayScheduleSelector', [getSelection(plugin, plugin.$selectingStart, $(this))]);
+          plugin.$el.trigger('dataChanged', [plugin.serialize()]);
+          options.onDataChange(plugin.serialize());
           plugin.$selectingStart = null;
         }
       }
