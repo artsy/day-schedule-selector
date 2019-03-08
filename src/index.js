@@ -10,11 +10,11 @@
   }
 
   DayScheduleSelector.DEFAULTS = {
-    days        : [0, 1, 2, 3, 4, 5, 6],  // Sun - Sat
+    days        : [1, 2, 3, 4, 5, 6, 7],  // Mon - Sun
     startTime   : '08:00',                // HH:mm format
     endTime     : '20:00',                // HH:mm format
     interval    : 30,                     // minutes
-    stringDays  : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    stringDays  : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     template    : '<div class="day-schedule-selector">'         +
                     '<table class="schedule-table">'            +
                       '<thead class="schedule-header"></thead>' +
@@ -62,7 +62,7 @@
         return '<td class="time-slot" data-time="' + hhmm(d) + '" data-day="' + days[i] + '"></td>'
       }).join();
 
-      $el.append('<tr><td class="time-label">' + hmmAmPm(d) + '</td>' + daysInARow + '</tr>');
+      $el.append('<tr><td class="time-label">' + hhmm(d) + '</td>' + daysInARow + '</tr>');
     });
   };
 
