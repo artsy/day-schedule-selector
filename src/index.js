@@ -212,6 +212,12 @@
     });
   };
 
+  DayScheduleSelector.prototype.clear = function () {
+    var plugin = this;
+    // deselect all cells
+    plugin.$el.find('.time-slot').removeAttr('data-selected');
+  }
+
   DayScheduleSelector.prototype.enable = function () {
     var plugin = this;
     plugin.options.enabled = true;
