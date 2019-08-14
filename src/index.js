@@ -185,7 +185,7 @@
    * @public
    * @param {Object} schedule An object containing the schedule of each day, e.g.
    *    {
-   *      0: [],
+   *      0: ["09:00"],
    *      1: [["15:00", "16:30"]],
    *      2: [],
    *      3: [],
@@ -198,9 +198,15 @@
     $.each(schedule, function(d, ds) {
       var $slots = plugin.$el.find('.time-slot[data-day="' + d + '"]');
       $.each(ds, function(_, s) {
-        for (i = 0; i < $slots.length; i++) {
-          if ($slots.eq(i).data('time') >= s[1]) { break; }
-          if ($slots.eq(i).data('time') >= s[0]) { plugin.select($slots.eq(i)); }
+        if(s.constructor === Array) {
+            for (i = 0; i < $slots.length; i++) {
+                if ($slots.eq(i).data('time') >= s[1]) { break; }
+                if ($slots.eq(i).data('time') >= s[0]) { plugin.select($slots.eq(i)); }
+            }
+        } else {
+            for (i = 0; i < $slots.length; i++) {
+                if ($slots.eq(i).data('time') === s) { plugin.select($slots.eq(i)); break; }
+            }
         }
       })
     });
